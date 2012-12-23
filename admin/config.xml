@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<fieldset
+		id="dop_field_id"
+		name="dop_field_id"
+		label="COM_CONDPOWER_CONFIG_GREETING_SETTINGS_LABEL"
+		description="COM_CONDPOWER_CONFIG_GREETING_SETTINGS_DESC"
+	>
+                <field name="dop_field_id" type="text" default="6" size="40"
+                label="ID дополнительного поля"
+                description="ID дополнительного поля" />
+
+	</fieldset>
+	<fieldset
+		name="permissions"
+		label="JCONFIG_PERMISSIONS_LABEL"
+		description="JCONFIG_PERMISSIONS_DESC"
+	>
+		<field
+			name="rules"
+			type="rules"
+			label="JCONFIG_PERMISSIONS_LABEL"
+			class="inputbox"
+			validate="rules"
+			filter="rules"
+			component="com_condpower"
+			section="component"
+		/>
+	</fieldset>
+</config>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="1.6.0" method="update">
+ 
+	<name>COM_CONDPOWER</name>
+	<!-- The following elements are optional and free of formatting conttraints -->
+	<creationDate>June 2012</creationDate>
+	<author>Konstantin Ovcharenko</author>
+	<authorEmail>alba2001@meta.ua</authorEmail>
+	<authorUrl>http://www.vi-fi.com.ua</authorUrl>
+	<copyright>Copyright Info</copyright>
+	<license>License Info</license>
+	<!--  The version string is recorded in the components table -->
+	<version>2.0</version>
+	<!-- The description is optional and defaults to the name -->
+	<description>COM_CONDPOWER_DESCRIPTION</description>
+ 	<install> <!-- Runs on install -->
+		<sql>
+			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+		</sql>
+	</install>
+	<uninstall> <!-- Runs on uninstall -->
+		<sql>
+			<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+		</sql>
+	</uninstall>
+
+	<files folder="site">
+		<filename>index.html</filename>
+		<filename>condpower.php</filename>
+		<filename>controller.php</filename>
+		<folder>views</folder>
+		<folder>models</folder>
+		<folder>language</folder>
+		<folder>assets</folder>
+	</files>
+ 
+	<media destination="com_condpower" folder="media">
+		<filename>index.html</filename>
+		<folder>images</folder>
+	</media>
+ 
+	<administration>
+		<menu img="../media/com_condpower/images/tux-16x16.png">COM_CONDPOWER_MENU</menu>
+		<files folder="admin">
+			<!-- Admin Main File Copy Section -->
+			<filename>index.html</filename>
+			<filename>config.xml</filename>
+			<filename>access.xml</filename>
+			<filename>condpower.php</filename>
+			<filename>controller.php</filename>
+			<!-- SQL files section -->
+			<folder>sql</folder>
+			<!-- tables files section -->
+			<folder>tables</folder>
+			<!-- models files section -->
+			<folder>models</folder>
+			<!-- views files section -->
+			<folder>views</folder>
+			<!-- controllers files section -->
+			<folder>controllers</folder>
+			<!-- helpers files section -->
+			<folder>helpers</folder>
+		</files>
+ 
+		<languages folder="admin">
+			<language tag="ru-RU">language/ru-RU/ru-RU.com_condpower.ini</language>
+			<language tag="ru-RU">language/ru-RU/ru-RU.com_condpower.sys.ini</language>
+		</languages>
+	</administration>
+ 
+	<!-- UPDATESERVER DEFINITION -->
+	<updateservers>
+		<server type="extension" priority="1" name="Condpower Update Site">http://vini-cloud.ru/update/condpower-update.xml</server>
+	</updateservers>
+ 
+</extension>

@@ -1,0 +1,17 @@
+.gret { 
+ font-size:1.3em;
+ font-weight:bold;
+ padding:20px 0px;
+}
+
+.tabtep {
+ border-collapse:collapse;
+}
+
+.tabtep td, .tabtep th {
+ border:1px solid #E1E1E1;
+}
+
+.tabtep th {
+ background-color:#F5F5F5;
+}
