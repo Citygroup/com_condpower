@@ -10,6 +10,7 @@ jimport('joomla.application.component.view');
  */
 class CondpowerViewCondpowers extends JView
 {
+    private $_categories;
 	/**
 	 * Condpowers view display method
 	 * @return void
@@ -18,8 +19,16 @@ class CondpowerViewCondpowers extends JView
 	{
 		// Get data from the model
 		$items = $this->get('Items');
+		$this->_categories = $this->get('Categories');
 		$pagination = $this->get('Pagination');
 
+                $filter_search = $mainframe->getUserStateFromRequest(
+                                    $option.'filter_search',
+                                    'filter_search_date','');
+                // Training filtering
+                $filter_category = $mainframe->getUserStateFromRequest(
+                                    $option.'filter_category',
+                                    'filter_category','');
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) 
 		{
@@ -28,6 +37,12 @@ class CondpowerViewCondpowers extends JView
 		}
 		// Assign data to the view
 		$this->items = $items;
+                $this->category_selecting = $this->_category_selecting(
+                    'filter_category',
+                    array('onchange'=>'document.adminForm.submit()'),
+                    $filter_category,
+                    'filter_category'
+                );
 		$this->pagination = $pagination;
  
 		// Set the toolbar
@@ -78,4 +93,36 @@ class CondpowerViewCondpowers extends JView
 		$document = JFactory::getDocument();
 		$document->setTitle(JText::_('COM_CONDPOWER_ADMINISTRATION'));
 	}
+        /**
+         * Выводим список категорий
+         */
+        private function _category_selecting($name, $attribs = null, $selected = NULL, $idtag = false)
+        {
+            if ($this->_categories)
+            {
+                $state = array();
+                $state[] = JHTML::_('select.option'
+                        , 0
+                        , JText::_('SELECT_CLIENT')
+                );
+                foreach ($this->_categories as $category)
+                {
+                    $state[] = JHTML::_('select.option'
+                            , $category->id
+                            , JText::_($category->nm)
+                    );
+                }
+                return JHTML::_('select.genericlist'
+                                , $state
+                                , $name
+                                , $attribs
+                                , 'value'
+                                , 'text'
+                                , $selected
+                                , $idtag
+                                , false );
+            }
+            return '';
+         }
+
 }

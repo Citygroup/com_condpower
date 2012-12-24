@@ -34,4 +34,13 @@ class CondpowerModelCondpowers extends JModelList
             $query .= ' WHERE '.implode(' AND ',$where);
             return $query;
 	}
+	protected function getCaegory()
+        {
+            $query = $this->_db->getQuery(true);
+            $query->select('#__condpower.id');
+            $query->select('#__condpower.nm');
+            $query->from('#__condpower');
+            $db->setQuery((string)$query);
+            return $db->loadResultArray();
+        }
 }
