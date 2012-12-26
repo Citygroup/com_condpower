@@ -17,17 +17,18 @@ class CondpowerViewCondpowers extends JView
 	 */
 	function display($tpl = null) 
 	{
+            $mainframe = &JFactory::getApplication();
 		// Get data from the model
 		$items = $this->get('Items');
 		$this->_categories = $this->get('Categories');
 		$pagination = $this->get('Pagination');
 
                 $filter_search = $mainframe->getUserStateFromRequest(
-                                    $option.'filter_search',
-                                    'filter_search_date','');
+                                    'com_condpower'.'filter_search',
+                                    'filter_search','');
                 // Training filtering
                 $filter_category = $mainframe->getUserStateFromRequest(
-                                    $option.'filter_category',
+                                    'com_condpower'.'filter_category',
                                     'filter_category','');
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) 
@@ -36,6 +37,7 @@ class CondpowerViewCondpowers extends JView
 			return false;
 		}
 		// Assign data to the view
+                $this->lists['search'] = $filter_search;
 		$this->items = $items;
                 $this->category_selecting = $this->_category_selecting(
                     'filter_category',
