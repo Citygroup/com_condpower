@@ -20,7 +20,7 @@ class CondpowerViewCondpowers extends JView
             $mainframe = &JFactory::getApplication();
 		// Get data from the model
 		$items = $this->get('Items');
-		$this->_categories = $this->get('Categories');
+		$this->_categories = $this->get('Vcategories');
 		$pagination = $this->get('Pagination');
 
                 $filter_search = $mainframe->getUserStateFromRequest(
@@ -64,18 +64,6 @@ class CondpowerViewCondpowers extends JView
 	{
 		$canDo = CondpowerHelper::getActions();
 		JToolBarHelper::title(JText::_('COM_CONDPOWER_MANAGER_CONDPOWERS'), 'condpower');
-//		if ($canDo->get('core.create')) 
-//		{
-//			JToolBarHelper::addNew('condpower.add', 'JTOOLBAR_NEW');
-//		}
-//		if ($canDo->get('core.edit')) 
-//		{
-//			JToolBarHelper::editList('condpower.edit', 'JTOOLBAR_EDIT');
-//		}
-//		if ($canDo->get('core.delete')) 
-//		{
-//			JToolBarHelper::deleteList('', 'condpowers.delete', 'JTOOLBAR_DELETE');
-//		}
 		if ($canDo->get('core.admin')) 
 		{
                     JToolBarHelper::divider();
@@ -105,13 +93,14 @@ class CondpowerViewCondpowers extends JView
                 $state = array();
                 $state[] = JHTML::_('select.option'
                         , 0
-                        , JText::_('SELECT_CLIENT')
+                        , JText::_('SELECT_CATEGORY')
                 );
                 foreach ($this->_categories as $category)
                 {
+//                    var_dump($category);exit;
                     $state[] = JHTML::_('select.option'
-                            , $category->id
-                            , JText::_($category->nm)
+                            , $category->catid
+                            , JText::_($category->name)
                     );
                 }
                 return JHTML::_('select.genericlist'

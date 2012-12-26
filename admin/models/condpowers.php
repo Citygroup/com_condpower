@@ -22,31 +22,35 @@ class CondpowerModelCondpowers extends JModelList
             $select[] = 'c.'.$db->nameQuote('virtuemart_custom_id');
             $select[] = 'c.'.$db->nameQuote('intvalue');
             $select[] = 'ru.'.$db->nameQuote('product_name');
-            $from[] = $db->nameQuote('#__virtuemart_product_custom_plg_param').' AS c';
-            $from[] = $db->nameQuote('#__virtuemart_products').' AS p';
-            $from[] = $db->nameQuote('#__virtuemart_products_ru_ru').' AS ru';
-            $from[] = $db->nameQuote('#__virtuemart_product_categories').' AS cat';
+            $cat = $db->nameQuote('#__virtuemart_product_categories');
+            $c = $db->nameQuote('#__virtuemart_product_custom_plg_param');
+            $p = $db->nameQuote('#__virtuemart_products');
+            $ru = $db->nameQuote('#__virtuemart_products_ru_ru');
+            $cond = $db->nameQuote('#__condpower');
             $where = $this->_buildQueryWhere();
-            $where[] = 'c.'.$db->nameQuote('virtuemart_product_id').' = '.
-                       'p.'.$db->nameQuote('virtuemart_product_id');
-            $where[] = 'ru.'.$db->nameQuote('virtuemart_product_id').' = '.
-                       'p.'.$db->nameQuote('virtuemart_product_id');
-            $where[] = 'cat.'.$db->nameQuote('virtuemart_product_id').' = '.
-                       'p.'.$db->nameQuote('virtuemart_product_id');
             $query = 'SELECT '.implode(',',$select);
-            $query .= ' FROM '.implode(',',$from);
-            $query .= ' WHERE '.implode(' AND ',$where);
-//            var_dump($query);exit;            
+            $query .= ' FROM '.$cat.' AS cat';
+            $query .= ' JOIN '.$cond.' AS cond ON (`cat`.`virtuemart_category_id` = `cond`.`catid`)';
+            $query .= ' JOIN '.$p.' AS p ON (`cat`.`virtuemart_product_id` = `p`.`virtuemart_product_id`)';
+            $query .= ' LEFT JOIN '.$c.' AS c ON (`cat`.`virtuemart_product_id` = `c`.`virtuemart_product_id`)';
+            $query .= ' LEFT JOIN '.$ru.' AS ru ON (`cat`.`virtuemart_product_id` = `ru`.`virtuemart_product_id`)';
+            if($where)
+            {
+                $query .= ' WHERE '.implode(' AND ',$where);
+            }
+//            var_dump($query);
             return $query;
 	}
-	protected function getCaegory()
+	public function getVcategories()
         {
             $query = $this->_db->getQuery(true);
-            $query->select('#__condpower.id');
-            $query->select('#__condpower.nm');
+            $query->select('#__condpower.catid');
+            $query->select('#__condpower.name');
             $query->from('#__condpower');
-            $db->setQuery((string)$query);
-            return $db->loadResultArray();
+            $this->_db->setQuery((string)$query);
+//            var_dump($this->_db->loadObjectList());
+//            exit;
+            return $this->_db->loadObjectList();
         }
         /**
          * Фильтры

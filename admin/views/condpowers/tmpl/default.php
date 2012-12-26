@@ -4,7 +4,7 @@ defined('_JEXEC') or die('Restricted Access');
 // load tooltip behavior
 JHtml::_('behavior.tooltip');
 ?>
-<form action="<?php echo JRoute::_('index.php?option=com_condpower'); ?>" method="post" name="adminForm">
+<form name="adminForm" action="<?php echo JRoute::_('index.php?option=com_condpower'); ?>" method="post" name="adminForm">
     <table>
     <tr>
         <td align="left" width="100%">
@@ -15,7 +15,7 @@ JHtml::_('behavior.tooltip');
             <button onclick="this.form.submit();">
             <?php echo JText::_('Search'); ?>
             </button>
-            <button onclick="this.form.submit();">
+            <button onclick="document.adminForm.filter_search.value='';this.form.submit();">
             <?php echo JText::_('Reset'); ?>
             </button>
         </td>
