@@ -32,7 +32,11 @@ class CondpowerViewCondpowers extends JView
                                     'filter_category','');
                 $filter_parent = $mainframe->getUserStateFromRequest(
                                     'com_condpower'.'filter_parent',
-                                    'filter_parent','3');
+                                    'filter_parent','');
+                if(!$filter_parent)
+                {
+                    $filter_parent = $this->get('Filter_parent');
+                }
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) 
 		{
