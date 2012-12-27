@@ -22,6 +22,9 @@ JHtml::_('behavior.tooltip');
         <td nowrap="nowrap">
             <?=$this->category_selecting?>
         </td>
+        <td nowrap="nowrap">
+            <?=$this->parent_selecting?>
+        </td>
     </tr>
 </table>
 

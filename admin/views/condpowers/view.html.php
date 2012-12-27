@@ -21,15 +21,18 @@ class CondpowerViewCondpowers extends JView
 		// Get data from the model
 		$items = $this->get('Items');
 		$this->_categories = $this->get('Vcategories');
+		$this->_parents = $this->get('Parents');
 		$pagination = $this->get('Pagination');
 
                 $filter_search = $mainframe->getUserStateFromRequest(
                                     'com_condpower'.'filter_search',
                                     'filter_search','');
-                // Training filtering
                 $filter_category = $mainframe->getUserStateFromRequest(
                                     'com_condpower'.'filter_category',
                                     'filter_category','');
+                $filter_parent = $mainframe->getUserStateFromRequest(
+                                    'com_condpower'.'filter_parent',
+                                    'filter_parent','3');
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) 
 		{
@@ -44,6 +47,12 @@ class CondpowerViewCondpowers extends JView
                     array('onchange'=>'document.adminForm.submit()'),
                     $filter_category,
                     'filter_category'
+                );
+                $this->parent_selecting = $this->_parent_selecting(
+                    'filter_parent',
+                    array('onchange'=>'document.adminForm.submit()'),
+                    $filter_parent,
+                    'filter_parent'
                 );
 		$this->pagination = $pagination;
  
@@ -101,6 +110,38 @@ class CondpowerViewCondpowers extends JView
                     $state[] = JHTML::_('select.option'
                             , $category->catid
                             , JText::_($category->name)
+                    );
+                }
+                return JHTML::_('select.genericlist'
+                                , $state
+                                , $name
+                                , $attribs
+                                , 'value'
+                                , 'text'
+                                , $selected
+                                , $idtag
+                                , false );
+            }
+            return '';
+         }
+        /**
+         * Выводим список родителей в дополнительных полях
+         */
+        private function _parent_selecting($name, $attribs = null, $selected = NULL, $idtag = false)
+        {
+            if ($this->_parents)
+            {
+                $state = array();
+                $state[] = JHTML::_('select.option'
+                        , 0
+                        , JText::_('SELECT_PARENT')
+                );
+                foreach ($this->_parents as $parent)
+                {
+//                    var_dump($category);exit;
+                    $state[] = JHTML::_('select.option'
+                            , $parent->virtuemart_custom_id
+                            , JText::_($parent->custom_title)
                     );
                 }
                 return JHTML::_('select.genericlist'

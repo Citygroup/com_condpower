@@ -17,13 +17,12 @@ class CondpowerModelCondpowers extends JModelList
 	protected function getListQuery()
 	{
             $db = &$this->_db;
-            $select[] = 'c.'.$db->nameQuote('id');
-            $select[] = 'c.'.$db->nameQuote('virtuemart_product_id');
-            $select[] = 'c.'.$db->nameQuote('virtuemart_custom_id');
-            $select[] = 'c.'.$db->nameQuote('intvalue');
+            $c = $db->nameQuote('#__virtuemart_product_custom_plg_param');
+            list($select,$join) = $this->_buildQuerySelect($c);
+            $select[] = 'p.'.$db->nameQuote('virtuemart_product_id');
+//            $select[] = 'c.'.$db->nameQuote('virtuemart_custom_id');
             $select[] = 'ru.'.$db->nameQuote('product_name');
             $cat = $db->nameQuote('#__virtuemart_product_categories');
-            $c = $db->nameQuote('#__virtuemart_product_custom_plg_param');
             $p = $db->nameQuote('#__virtuemart_products');
             $ru = $db->nameQuote('#__virtuemart_products_ru_ru');
             $cond = $db->nameQuote('#__condpower');
@@ -32,15 +31,20 @@ class CondpowerModelCondpowers extends JModelList
             $query .= ' FROM '.$cat.' AS cat';
             $query .= ' JOIN '.$cond.' AS cond ON (`cat`.`virtuemart_category_id` = `cond`.`catid`)';
             $query .= ' JOIN '.$p.' AS p ON (`cat`.`virtuemart_product_id` = `p`.`virtuemart_product_id`)';
-            $query .= ' LEFT JOIN '.$c.' AS c ON (`cat`.`virtuemart_product_id` = `c`.`virtuemart_product_id`)';
+            
             $query .= ' LEFT JOIN '.$ru.' AS ru ON (`cat`.`virtuemart_product_id` = `ru`.`virtuemart_product_id`)';
+            $query .= implode(' ',$join);
             if($where)
             {
                 $query .= ' WHERE '.implode(' AND ',$where);
             }
-//            var_dump($query);
+            var_dump($query);
             return $query;
 	}
+        /**
+         * Вывод списка категорий компонента condpower
+         * @return objects list
+         */
 	public function getVcategories()
         {
             $query = $this->_db->getQuery(true);
@@ -53,6 +57,20 @@ class CondpowerModelCondpowers extends JModelList
             return $this->_db->loadObjectList();
         }
         /**
+         * Вывод списка родителей в дополнительных полях Виртуемарта
+         * @return type
+         */
+	public function getParents()
+        {
+            $query = $this->_db->getQuery(true);
+            $query->select('virtuemart_custom_id');
+            $query->select('custom_title');
+            $query->from('#__virtuemart_customs');
+            $query->where('field_type = "P"');
+            $this->_db->setQuery((string)$query);
+            return $this->_db->loadObjectList();
+        }
+        /**
          * Фильтры
          */
         function _buildQueryWhere()
@@ -61,7 +79,6 @@ class CondpowerModelCondpowers extends JModelList
             $filter_search = $mainframe->getUserStateFromRequest(
                                 'com_condpower'.'filter_search',
                                 'filter_search','');
-            // Training filtering
             $filter_category = $mainframe->getUserStateFromRequest(
                                 'com_condpower'.'filter_category',
                                 'filter_category','');
@@ -79,5 +96,33 @@ class CondpowerModelCondpowers extends JModelList
                 $where[] = 'cat.'.$this->_db->nameQuote('virtuemart_category_id').' = '.$filter_category;
             }
             return $where;
+        }
+        /**
+         * Добавляем в селект дополнительные поля
+         */
+        function _buildQuerySelect($c)
+        {
+            $mainframe = &JFactory::getApplication();
+            $filter_parent = $mainframe->getUserStateFromRequest(
+                                'com_condpower'.'filter_parent',
+                                'filter_parent','');
+            $select = $from = array();
+            if ( $filter_parent)
+            {
+                $mainframe->setUserState( 'com_condpower'.'filter_parent', $filter_parent );
+                $query = $this->_db->getQuery(true);
+                $query->select('virtuemart_custom_id');
+                $query->from('#__virtuemart_customs ');
+                $query->where('custom_parent_id = '.$filter_parent);
+                $this->_db->setQuery((string)$query);
+                $cids = $this->_db->LoadResultArray();
+                foreach($cids as $cid)
+                {
+                    $join[] = ' LEFT JOIN '.$c.' AS c'.$cid.' ON (`cat`.`virtuemart_product_id` = `c'.$cid.'`.`virtuemart_product_id`)'.
+                            ' AND `c'.$cid.'`.`virtuemart_custom_id` = '.$cid;
+                    $select[] = '`c'.$cid.'`.'.$this->_db->nameQuote('intvalue');
+                }
+            }
+            return array($select,$join);
         }
 }
