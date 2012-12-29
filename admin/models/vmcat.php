@@ -244,16 +244,24 @@ class CondpowerModelVmcat extends JModelAdmin
 
         function export_csv($cids)
         {
+            $filter_custom_fields = JRequest::getVar('filter_custom_fields');
             $db = $this->_db;
+            foreach ($filter_custom_fields as $virtuemart_custom_id)
+            {
+                
+            }
             $query = $db->getQuery(true);
-            $query->select('#__virtuemart_product_custom_plg_param.id');
-            $query->select('#__virtuemart_product_custom_plg_param.virtuemart_product_id');
-            $query->select('#__virtuemart_products_ru_ru.product_name');
-            $query->select('#__virtuemart_product_custom_plg_param.intvalue');
-            $query->from('#__virtuemart_products_ru_ru');
-            $query->from('#__virtuemart_product_custom_plg_param');
-            $query->where('#__virtuemart_product_custom_plg_param.virtuemart_product_id = #__virtuemart_products_ru_ru.virtuemart_product_id');
-            $query->where('#__virtuemart_product_custom_plg_param.id IN ('.implode(',',$cids).')');
+            $query->select('product_custom_plg_param.virtuemart_custom_id');
+            $query->select('products_ru_ru.virtuemart_product_id');
+            $query->select('products_ru_ru.product_name');
+            $query->select('product_custom_plg_param.intvalue');
+            $query->from('#__virtuemart_products_ru_ru AS products_ru_ru');
+            $query->leftjoin('#__virtuemart_product_custom_plg_param AS product_custom_plg_param'.
+                            ' ON product_custom_plg_param.virtuemart_product_id = products_ru_ru.virtuemart_product_id'
+            );
+
+            $query->where('product_custom_plg_param.virtuemart_product_id IN ('.implode(',',$cids).')');
+            $query->where('product_custom_plg_param.virtuemart_custom_id IN ('.implode(',',$filter_custom_fields).')');
             $db->setQuery((string)$query);
             $rows = $db->loadRowList();
             $path = JPATH_ROOT.DS.'tmp'.DS.'com_condpower.csv';
@@ -283,14 +291,25 @@ class CondpowerModelVmcat extends JModelAdmin
 
         function import_csv()
         {
+            $msg = 'OK';
             $path = JPATH_ROOT.DS.'tmp'.DS.'com_condpower.csv';
             if ($fp = fopen($path, "r"))
             {
                 while (($data = fgetcsv($fp, 1000, ",")) !== FALSE) 
                 {
-                    $_data['id'] = $data[0];
+                    $_data['virtuemart_custom_id'] = $data[0];
+                    $_data['virtuemart_product_id'] = $data[1];
+                    $id = $this->_find_id2($_data['virtuemart_custom_id'],$_data['virtuemart_product_id']);
+                    if($id)
+                    {
+                        $_data['id'] = $id;
+                    }
                     $_data['intvalue'] = $data[3];
-                    $this->_save($_data);
+//                    var_dump($_data);exit;
+                    if(!$this->_save($_data))
+                    {
+                        $msg = 'ERROR';
+                    }
                 }
                 fclose($fp);
             }
@@ -298,7 +317,25 @@ class CondpowerModelVmcat extends JModelAdmin
             {
                 return array(FALSE, JTEXT::_('COM_CONDPOWER_ERROR_OPEN_TO_IMPORT'));
             }
-            return array(TRUE,'OK');
+            return array(TRUE,$msg);
+        }
+	/**
+	 * Method to import CSV data from table virtuemart_product_custom_plg_param
+	 *
+	 * @param	noting
+	 * @return	bool and error string.
+	 * @since	0.0.1
+         * @author	Konstantin Ovcharenko
+	 */
+        private function _find_id2($virtuemart_custom_id, $virtuemart_product_id)
+        {
+            $query = $this->_db->getQuery(true);
+            $query->select('id');
+            $query->from('#__virtuemart_product_custom_plg_param');
+            $query->where('virtuemart_custom_id ='.$virtuemart_custom_id);
+            $query->where('virtuemart_product_id ='.$virtuemart_product_id);
+            $this->_db->setQuery((string)$query);
+            return $this->_db->loadResult();
         }
 
 }

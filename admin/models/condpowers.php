@@ -8,8 +8,14 @@ jimport('joomla.application.component.modellist');
  */
 class CondpowerModelCondpowers extends JModelList
 {
-    
-	/**
+    private $_filter_parent;
+    private $_filter_search;
+    private $_filter_category;
+    private $_filter_custom_fields;
+
+
+
+    /**
 	 * Method to build an SQL query to load the list data.
 	 *
 	 * @return	string	An SQL query
@@ -38,7 +44,7 @@ class CondpowerModelCondpowers extends JModelList
             {
                 $query .= ' WHERE '.implode(' AND ',$where);
             }
-            var_dump($query);
+//            var_dump($query);
             return $query;
 	}
         /**
@@ -57,71 +63,173 @@ class CondpowerModelCondpowers extends JModelList
             return $this->_db->loadObjectList();
         }
         /**
-         * Вывод списка родителей в дополнительных полях Виртуемарта
-         * @return type
+         * Строим селект списка родителей
+         * @return query
          */
-	public function getParents()
+        private function _build_query_parents()
         {
             $query = $this->_db->getQuery(true);
             $query->select('virtuemart_custom_id');
             $query->select('custom_title');
             $query->from('#__virtuemart_customs');
             $query->where('field_type = "P"');
-            $this->_db->setQuery((string)$query);
-            return $this->_db->loadObjectList();
+            return $query;
+        }
+
+        /**
+         * Вывод списка родителей в дополнительных полях Виртуемарта
+         * @return type
+         */
+	public function getParents()
+        {
+                $query = $this->_build_query_parents();
+                $this->_db->setQuery((string)$query);
+                return $this->_db->loadObjectList();
         }
         /**
          * Фильтры
          */
         function _buildQueryWhere()
         {
-            $mainframe = &JFactory::getApplication();
-            $filter_search = $mainframe->getUserStateFromRequest(
-                                'com_condpower'.'filter_search',
-                                'filter_search','');
-            $filter_category = $mainframe->getUserStateFromRequest(
-                                'com_condpower'.'filter_category',
-                                'filter_category','');
+            $filter_search = $this->getFilter_search();
+            $filter_category = $this->getFilter_category();
             // Prepare the WHERE clause
             $where = array();
-            // Determine published state
+            // Фильтр по названию
             if ( $filter_search)
             {
-                $mainframe->setUserState( 'com_condpower'.'filter_search', $filter_search );
                 $where[] = 'ru.'.$this->_db->nameQuote('product_name').' LIKE "'.$filter_search.'%"';
             }
+            // Фильтр по категории товара
             if ( $filter_category)
             {
-                $mainframe->setUserState( 'com_condpower'.'filter_category', $filter_category );
                 $where[] = 'cat.'.$this->_db->nameQuote('virtuemart_category_id').' = '.$filter_category;
             }
             return $where;
         }
         /**
-         * Добавляем в селект дополнительные поля
+         * Получение значения для фильтра поиска по названию
+         *  @return str
+         */
+        public function getFilter_search()
+        {
+            if(!$this->_filter_search)
+            {
+                $mainframe = &JFactory::getApplication();
+                $this->_filter_search = $mainframe->getUserStateFromRequest(
+                                'com_condpower'.'filter_search',
+                                'filter_search','');
+                if ($this->_filter_search)
+                {
+                    $mainframe->setUserState( 'com_condpower'.'filter_search', $this->_filter_search);
+                }
+            }
+            return $this->_filter_search;
+        }
+        /**
+         * Получение значения для фильтра поиска по категориям товаров
+         *  @return str
+         */
+        public function getFilter_category()
+        {
+            if(!$this->_filter_category)
+            {
+                $mainframe = &JFactory::getApplication();
+                $this->_filter_category = $mainframe->getUserStateFromRequest(
+                                'com_condpower'.'filter_category',
+                                'filter_category','');
+                if ($this->_filter_category)
+                {
+                    $mainframe->setUserState( 'com_condpower'.'filter_category', $this->_filter_category);
+                }
+            }
+            return $this->_filter_category;
+        }
+        /**
+         * Получение значения для фильтра по пользовательским полям
+         *  @return str
+         */
+        public function getFilter_custom_fields()
+        {
+            if(!$this->_filter_custom_fields)
+            {
+                $mainframe = &JFactory::getApplication();
+                $this->_filter_custom_fields = $mainframe->getUserStateFromRequest(
+                                'com_condpower'.'filter_custom_fields',
+                                'filter_custom_fields',array());
+                if ($this->_filter_custom_fields)
+                {
+                    $mainframe->setUserState( 'com_condpower'.'filter_custom_fields', $this->_filter_custom_fields);
+                }
+            }
+            return $this->_filter_custom_fields;
+        }
+        /**
+         * Получение первого родителя полей пользователя для селекта
+         *  @return int
+         */
+        public function getFilter_parent()
+        {
+            if(!$this->_filter_parent)
+            {
+                $mainframe = &JFactory::getApplication();
+                $this->_filter_parent = $mainframe->getUserStateFromRequest(
+                                    'com_condpower'.'filter_parent',
+                                    'filter_parent','');
+                if ( !$this->_filter_parent)
+                {
+                    $query = $this->_build_query_parents();
+                    $this->_db->setQuery((string)$query);
+                    $this->_filter_parent = $this->_db->loadResult();
+                }
+                $mainframe->setUserState('com_condpower'.'filter_parent', $this->_filter_parent);
+            }
+            return $this->_filter_parent;
+        }
+        /**
+         * Получение списка полей пользователя родителя
+         *  @return int
+         */
+        public function getCustom_fields()
+        {
+            $query = $this->_db->getQuery(true);
+            $query->select('virtuemart_custom_id');
+            $query->select('custom_title');
+            $query->from('#__virtuemart_customs');
+            $query->where('`custom_parent_id` = '.$this->getFilter_parent());
+            $this->_db->setQuery((string)$query);
+            return $this->_db->loadObjectList();
+
+        }
+
+        /**
+         * Готовим часть селекта, отвечающего за выборку значений полй пользователя Виртуемарта2
          */
         function _buildQuerySelect($c)
         {
-            $mainframe = &JFactory::getApplication();
-            $filter_parent = $mainframe->getUserStateFromRequest(
-                                'com_condpower'.'filter_parent',
-                                'filter_parent','');
-            $select = $from = array();
-            if ( $filter_parent)
+            
+            $select = $join = array();
+            // Определяем ИД родителя
+            $filter_parent = $this->getFilter_parent();
+            // Выбираем детей
+            $query = $this->_db->getQuery(true);
+            $query->select('virtuemart_custom_id');
+            $query->from('#__virtuemart_customs ');
+            $query->where('custom_parent_id = '.$filter_parent);
+            // Если установлен фильтр по полям пользователя
+            $filter_custom_fields = $this->getFilter_custom_fields();
+            if (count($filter_custom_fields)>0)
             {
-                $mainframe->setUserState( 'com_condpower'.'filter_parent', $filter_parent );
-                $query = $this->_db->getQuery(true);
-                $query->select('virtuemart_custom_id');
-                $query->from('#__virtuemart_customs ');
-                $query->where('custom_parent_id = '.$filter_parent);
-                $this->_db->setQuery((string)$query);
-                $cids = $this->_db->LoadResultArray();
-                foreach($cids as $cid)
-                {
-                    $join[] = ' LEFT JOIN '.$c.' AS c'.$cid.' ON (`cat`.`virtuemart_product_id` = `c'.$cid.'`.`virtuemart_product_id`)'.
-                            ' AND `c'.$cid.'`.`virtuemart_custom_id` = '.$cid;
-                    $select[] = '`c'.$cid.'`.'.$this->_db->nameQuote('intvalue');
-                }
+                $query->where('virtuemart_custom_id IN ('.implode(',',$filter_custom_fields).')');
+            }
+            $this->_db->setQuery((string)$query);
+            $cids = $this->_db->LoadResultArray();
+            // Сама часть селекта
+            foreach($cids as $cid)
+            {
+                $join[] = ' LEFT JOIN '.$c.' AS c'.$cid.' ON (`cat`.`virtuemart_product_id` = `c'.$cid.'`.`virtuemart_product_id`)'.
+                        ' AND `c'.$cid.'`.`virtuemart_custom_id` = '.$cid;
+                $select[] = '`c'.$cid.'`.'.$this->_db->nameQuote('intvalue').' AS intvalue_'.$cid;
             }
             return array($select,$join);
         }

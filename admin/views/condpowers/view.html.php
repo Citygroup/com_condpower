@@ -10,7 +10,6 @@ jimport('joomla.application.component.view');
  */
 class CondpowerViewCondpowers extends JView
 {
-    private $_categories;
 	/**
 	 * Condpowers view display method
 	 * @return void
@@ -19,29 +18,15 @@ class CondpowerViewCondpowers extends JView
 	{
             $mainframe = &JFactory::getApplication();
 		// Get data from the model
-		$items = $this->get('Items');
+		$this->items = $this->get('Items');
 		$this->_categories = $this->get('Vcategories');
 		$this->_parents = $this->get('Parents');
-		$pagination = $this->get('Pagination');
-
-                $filter_search = $mainframe->getUserStateFromRequest(
-                                    'com_condpower'.'filter_search',
-                                    'filter_search','');
-                $filter_category = $mainframe->getUserStateFromRequest(
-                                    'com_condpower'.'filter_category',
-                                    'filter_category','');
-                $filter_parent = $mainframe->getUserStateFromRequest(
-                                    'com_condpower'.'filter_parent',
-                                    'filter_parent','3');
-		// Check for errors.
-		if (count($errors = $this->get('Errors'))) 
-		{
-			JError::raiseError(500, implode('<br />', $errors));
-			return false;
-		}
-		// Assign data to the view
-                $this->lists['search'] = $filter_search;
-		$this->items = $items;
+		$this->pagination = $this->get('Pagination');
+                $this->filter_search = $this->get('Filter_search');
+                $this->filter_custom_fields = $this->get('Filter_custom_fields');
+                $filter_category = $this->get('Filter_category');
+                $filter_parent = $this->get('Filter_parent');
+		$this->custom_fields = $this->get('Custom_fields');
                 $this->category_selecting = $this->_category_selecting(
                     'filter_category',
                     array('onchange'=>'document.adminForm.submit()'),
@@ -54,7 +39,6 @@ class CondpowerViewCondpowers extends JView
                     $filter_parent,
                     'filter_parent'
                 );
-		$this->pagination = $pagination;
  
 		// Set the toolbar
 		$this->addToolBar();
@@ -76,7 +60,7 @@ class CondpowerViewCondpowers extends JView
 		if ($canDo->get('core.admin')) 
 		{
                     JToolBarHelper::divider();
-                    JToolBarHelper::custom('condpowers.export_csv', 'upload', '', JText::_('COM_CONDPOWER_MANAGER_EXPORT'), false);
+                    JToolBarHelper::custom('condpowers.export_csv', 'upload', '', JText::_('COM_CONDPOWER_MANAGER_EXPORT'), TRUE);
                     JToolBarHelper::custom('condpowers.import_csv', 'back', '', JText::_('COM_CONDPOWER_MANAGER_IMPORT'), false);
                     JToolBarHelper::divider();
                     JToolBarHelper::preferences('com_condpower');
