@@ -8,6 +8,7 @@ jimport('joomla.application.component.modellist');
  */
 class CondpowerModelCondpowers extends JModelList
 {
+<<<<<<< HEAD
     private $_filter_parent;
     private $_filter_search;
     private $_filter_category;
@@ -16,6 +17,12 @@ class CondpowerModelCondpowers extends JModelList
 
 
     /**
+=======
+ 
+    // ObjectList 
+    private $_filter_parent;
+        /**
+>>>>>>> 1f36548ef43ba4622ea7870cc6db2525f7584fce
 	 * Method to build an SQL query to load the list data.
 	 *
 	 * @return	string	An SQL query
@@ -44,7 +51,10 @@ class CondpowerModelCondpowers extends JModelList
             {
                 $query .= ' WHERE '.implode(' AND ',$where);
             }
+<<<<<<< HEAD
 //            var_dump($query);
+=======
+>>>>>>> 1f36548ef43ba4622ea7870cc6db2525f7584fce
             return $query;
 	}
         /**
@@ -63,10 +73,17 @@ class CondpowerModelCondpowers extends JModelList
             return $this->_db->loadObjectList();
         }
         /**
+<<<<<<< HEAD
          * Строим селект списка родителей
          * @return query
          */
         private function _build_query_parents()
+=======
+         * Создание запроса родителей в дополнительных полях Виртуемарта
+         * @return query
+         */
+        private function _build_parents_query()
+>>>>>>> 1f36548ef43ba4622ea7870cc6db2525f7584fce
         {
             $query = $this->_db->getQuery(true);
             $query->select('virtuemart_custom_id');
@@ -75,6 +92,7 @@ class CondpowerModelCondpowers extends JModelList
             $query->where('field_type = "P"');
             return $query;
         }
+<<<<<<< HEAD
 
         /**
          * Вывод списка родителей в дополнительных полях Виртуемарта
@@ -85,6 +103,17 @@ class CondpowerModelCondpowers extends JModelList
                 $query = $this->_build_query_parents();
                 $this->_db->setQuery((string)$query);
                 return $this->_db->loadObjectList();
+=======
+        /**
+         * Вывод списка родителей в дополнительных полях Виртуемарта
+         * @return object
+         */
+	public function getParents()
+        {
+            $query = $this->_build_parents_query();
+            $this->_db->setQuery((string)$query);
+            return $this->_db->loadObjectList();
+>>>>>>> 1f36548ef43ba4622ea7870cc6db2525f7584fce
         }
         /**
          * Фильтры
@@ -108,11 +137,31 @@ class CondpowerModelCondpowers extends JModelList
             return $where;
         }
         /**
+<<<<<<< HEAD
          * Получение значения для фильтра поиска по названию
          *  @return str
+=======
+         *  Вычисляем первый ИД родителя в таблице полей пользователя
+         *  @return ineger
+         */
+        public function getFilter_parent()
+        {
+            if(!$this->_filter_parent)
+            {
+                $query = $this->_build_parents_query();
+                $this->_db->setQuery((string)$query);
+                $this->_filter_parent = $this->_db->loadResult();
+            }
+            return $this->_filter_parent;
+        }
+
+        /**
+         * Добавляем в селект дополнительные поля
+>>>>>>> 1f36548ef43ba4622ea7870cc6db2525f7584fce
          */
         public function getFilter_search()
         {
+<<<<<<< HEAD
             if(!$this->_filter_search)
             {
                 $mainframe = &JFactory::getApplication();
@@ -231,6 +280,32 @@ class CondpowerModelCondpowers extends JModelList
                         ' AND `c'.$cid.'`.`virtuemart_custom_id` = '.$cid;
                 $select[] = '`c'.$cid.'`.'.$this->_db->nameQuote('intvalue').' AS intvalue_'.$cid;
             }
+=======
+            $mainframe = &JFactory::getApplication();
+            $filter_parent = $mainframe->getUserStateFromRequest(
+                                'com_condpower'.'filter_parent',
+                                'filter_parent','');
+            $select = $from = array();
+            if (!$filter_parent)
+            {
+                $filter_parent = $this->getFilter_parent();
+            }
+            // Находим записи родителей в таблице пользовательских полей   
+            $query = $this->_db->getQuery(true);
+            $query->select('virtuemart_custom_id');
+            $query->from('#__virtuemart_customs');
+            $query->where('custom_parent_id = '.$filter_parent);
+            $this->_db->setQuery((string)$query);
+            $cids = $this->_db->LoadResultArray();
+            // Строим дополнительные левые джоины
+            foreach($cids as $cid)
+            {
+                $join[] = ' LEFT JOIN '.$c.' AS c'.$cid.' ON (`cat`.`virtuemart_product_id` = `c'.$cid.'`.`virtuemart_product_id`'.
+                        ' AND `c'.$cid.'`.`virtuemart_custom_id` = '.$cid.')';
+                $select[] = '`c'.$cid.'`.'.$this->_db->nameQuote('intvalue').' AS intvalue_'.$cid;
+            }
+            $mainframe->setUserState( 'com_condpower'.'filter_parent', $filter_parent );
+>>>>>>> 1f36548ef43ba4622ea7870cc6db2525f7584fce
             return array($select,$join);
         }
 }
