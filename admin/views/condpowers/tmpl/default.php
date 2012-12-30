@@ -10,7 +10,7 @@ JHtml::_('behavior.tooltip');
     #com_condpower th{padding: 0; margin: 0}
 </style>
 <div id="com_condpower">
-<form name="adminForm" action="<?php echo JRoute::_('index.php?option=com_condpower'); ?>" method="post" name="adminForm">
+<form enctype="multipart/form-data" name="adminForm" action="<?php echo JRoute::_('index.php?option=com_condpower'); ?>" method="post" name="adminForm">
     <table>
     <tr>
         <td align="left" width="100%">
@@ -52,7 +52,6 @@ JHtml::_('behavior.tooltip');
         </td>
     </tr>
 </table>
-
 	<table class="adminlist">
 		<thead><?php echo $this->loadTemplate('head');?></thead>
 		<tfoot><?php echo $this->loadTemplate('foot');?></tfoot>
@@ -62,6 +61,11 @@ JHtml::_('behavior.tooltip');
 		<input type="hidden" name="task" value="" />
 		<input type="hidden" name="boxchecked" value="0" />
 		<?php echo JHtml::_('form.token'); ?>
+                <input type="file" id="import_file_upload" 
+                       name="file_upload" 
+                       style="display: none" 
+                       onchange="Joomla.submitform('condpowers.import_csv');"
+                />
 	</div>
 </form>
 </div>

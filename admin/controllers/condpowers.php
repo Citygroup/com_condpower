@@ -24,9 +24,8 @@ class CondpowerControllerCondpowers extends JControllerAdmin
         {
             // Check for request forgeries.
             JRequest::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
-            $cids = JRequest::getVar('cid', array(), '', 'array');
             $model = $this->getModel('Vmcat');
-            list($resuls,$msg) = $model->export_csv($cids);
+            list($resuls,$msg) = $model->export_csv();
             $this->setMessage($msg);
             $this->setRedirect(
                 JRoute::_(
@@ -39,10 +38,8 @@ class CondpowerControllerCondpowers extends JControllerAdmin
         {
             // Check for request forgeries.
             JRequest::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
-
-            $cids = JRequest::getVar('cid', array(), '', 'array');
             $model = $this->getModel('Vmcat');
-            list($resuls,$msg) = $model->import_csv($cids);
+            list($resuls,$msg) = $model->import_csv();
             $this->setMessage($msg);
             $this->setRedirect(
                 JRoute::_(

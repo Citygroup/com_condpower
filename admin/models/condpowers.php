@@ -44,7 +44,6 @@ class CondpowerModelCondpowers extends JModelList
             {
                 $query .= ' WHERE '.implode(' AND ',$where);
             }
-//            var_dump($query);
             return $query;
 	}
         /**

@@ -41,8 +41,12 @@ class CondpowerViewCondpowers extends JView
                 );
  
 		// Set the toolbar
-		$this->addToolBar();
- 
+                $objTasksToolBar = new JToolBar();
+		$this->addToolBar($objTasksToolBar);
+                
+                // Add toolbar buttons
+                
+                
 		// Display the template
 		parent::display($tpl);
  
@@ -53,17 +57,25 @@ class CondpowerViewCondpowers extends JView
 	/**
 	 * Setting the toolbar
 	 */
-	protected function addToolBar() 
+	protected function addToolBar(&$objTasksToolBar) 
 	{
 		$canDo = CondpowerHelper::getActions();
 		JToolBarHelper::title(JText::_('COM_CONDPOWER_MANAGER_CONDPOWERS'), 'condpower');
 		if ($canDo->get('core.admin')) 
 		{
+                     
+                    $html = "<a class=\"toolbar\" 
+                        onclick=\"Joomla.submitform('task.add', document.tasksForm)\" href=\"#\">";
+                    $html .= "<span class=\"icon-32-new\"></span>";
+                    $html .= JText::_('JTOOLBAR_NEW');
+                    $html .= "</a>\n";    	
+                    $objTasksToolBar->appendButton('Custom', $html, 'new');
                     JToolBarHelper::divider();
                     JToolBarHelper::custom('condpowers.export_csv', 'upload', '', JText::_('COM_CONDPOWER_MANAGER_EXPORT'), TRUE);
                     JToolBarHelper::custom('condpowers.import_csv', 'back', '', JText::_('COM_CONDPOWER_MANAGER_IMPORT'), false);
                     JToolBarHelper::divider();
                     JToolBarHelper::preferences('com_condpower');
+                    $this->tasksToolBar = $objTasksToolBar->render();
 		}
 	}
 	/**
@@ -75,6 +87,9 @@ class CondpowerViewCondpowers extends JView
 	{
 		$document = JFactory::getDocument();
 		$document->setTitle(JText::_('COM_CONDPOWER_ADMINISTRATION'));
+                $document->addScript(JURI::root() . "/administrator/components/com_condpower/views/condpowers/submitbutton.js");
+                $document->addScript(JURI::root() . "/administrator/components/com_condpower/assets/jquery-1.8.3.min.js");
+
 	}
         /**
          * Выводим список категорий

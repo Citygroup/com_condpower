@@ -4,7 +4,13 @@ Joomla.submitbutton = function(task)
 }
 Joomla.submitbutton2 = function(task)
 {
+    console.log(task);
+    return false;
 	if (task == '')
+	{
+		return false;
+	}
+	else if (task == '')
 	{
 		return false;
 	}
