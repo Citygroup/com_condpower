@@ -6,7 +6,6 @@ defined('_JEXEC') or die('Restricted Access');
 <?php foreach($this->items as $i => $item): ?>
 	<tr class="row<?php echo $i % 2; ?>">
 		<td>
-<<<<<<< HEAD
 			<?php echo $item->virtuemart_product_id; ?>
 		</td>
 		<td>
@@ -31,21 +30,6 @@ defined('_JEXEC') or die('Restricted Access');
                         }
                         echo '</table>';
                     ?>
-=======
-			<?php echo JHtml::_('grid.id', $i, $item->virtuemart_product_id); ?>
-		</td>
-		<td>
-			<?php echo $item->virtuemart_product_id; ?>
-		</td>
-		<td>
-			<?php //echo $item->virtuemart_custom_id; ?>
-		</td>
-		<td>
-			<?php echo $item->intvalue_4; ?>
-		</td>
-		<td>
-			<?php echo $item->intvalue_8; ?>
->>>>>>> 1f36548ef43ba4622ea7870cc6db2525f7584fce
 		</td>
 		<td>
 			<?php echo $item->product_name; ?>

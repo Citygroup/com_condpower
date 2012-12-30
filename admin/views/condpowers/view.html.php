@@ -21,39 +21,12 @@ class CondpowerViewCondpowers extends JView
 		$this->items = $this->get('Items');
 		$this->_categories = $this->get('Vcategories');
 		$this->_parents = $this->get('Parents');
-<<<<<<< HEAD
 		$this->pagination = $this->get('Pagination');
                 $this->filter_search = $this->get('Filter_search');
                 $this->filter_custom_fields = $this->get('Filter_custom_fields');
                 $filter_category = $this->get('Filter_category');
                 $filter_parent = $this->get('Filter_parent');
 		$this->custom_fields = $this->get('Custom_fields');
-=======
-		$pagination = $this->get('Pagination');
-
-                $filter_search = $mainframe->getUserStateFromRequest(
-                                    'com_condpower'.'filter_search',
-                                    'filter_search','');
-                $filter_category = $mainframe->getUserStateFromRequest(
-                                    'com_condpower'.'filter_category',
-                                    'filter_category','');
-                $filter_parent = $mainframe->getUserStateFromRequest(
-                                    'com_condpower'.'filter_parent',
-                                    'filter_parent','');
-                if(!$filter_parent)
-                {
-                    $filter_parent = $this->get('Filter_parent');
-                }
-		// Check for errors.
-		if (count($errors = $this->get('Errors'))) 
-		{
-			JError::raiseError(500, implode('<br />', $errors));
-			return false;
-		}
-		// Assign data to the view
-                $this->lists['search'] = $filter_search;
-		$this->items = $items;
->>>>>>> 1f36548ef43ba4622ea7870cc6db2525f7584fce
                 $this->category_selecting = $this->_category_selecting(
                     'filter_category',
                     array('onchange'=>'document.adminForm.submit()'),
