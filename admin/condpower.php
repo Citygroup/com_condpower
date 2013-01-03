@@ -1,7 +1,6 @@
 <?php
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
- 
 // Access check.
 if (!JFactory::getUser()->authorise('core.manage', 'com_condpower'))
 {

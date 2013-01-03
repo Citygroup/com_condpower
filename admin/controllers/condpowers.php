@@ -27,11 +27,15 @@ class CondpowerControllerCondpowers extends JControllerAdmin
             $model = $this->getModel('Vmcat');
             list($resuls,$msg) = $model->export_csv();
             $this->setMessage($msg);
-            $this->setRedirect(
-                JRoute::_(
-                        'index.php?option=' . $this->option.'&view=condpowers', false
-                )
-            );
+            $name = 'com_condpower.csv';
+            $path = JPATH_ROOT.DS.'tmp'.DS.$name;
+            $href = JURI::base().'components/com_condpower/download.php?path='.$path;
+            $this->setRedirect(JRoute::_( $href, false));
+//            $this->setRedirect(
+//                JRoute::_(
+//                        'index.php?option=' . $this->option.'&view=condpowers', false
+//                )
+//            );
            
         }
         public function import_csv()
@@ -47,5 +51,4 @@ class CondpowerControllerCondpowers extends JControllerAdmin
                 )
             );
         }
-
 }

@@ -317,8 +317,9 @@ class CondpowerModelVmcat extends JModelAdmin
             {
                 return array(FALSE, JTEXT::_('COM_CONDPOWER_ERROR_OPEN_TO_EXPORT'));
             }
-            $href = str_replace('administrator/', '', JURI::base()).'tmp/'.$name;
-            return array(TRUE,'<a href="'.$href.'" >OK. Нажмите для загрузки</a>');
+//            $href = str_replace('administrator/', '', JURI::base()).'tmp/'.$name;
+//            $href = JURI::base().'components/com_condpower/download.php?path='.$path;
+            return array(TRUE,'OK');
 
         }
 	/**

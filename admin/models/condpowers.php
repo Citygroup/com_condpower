@@ -207,7 +207,8 @@ class CondpowerModelCondpowers extends JModelList
         function _buildQuerySelect($c)
         {
             
-            $select = $join = array();
+            $select = array();
+            $join = array();
             // Определяем ИД родителя
             $filter_parent = $this->getFilter_parent();
             // Выбираем детей
