@@ -63,16 +63,9 @@ class CondpowerViewCondpowers extends JView
 		JToolBarHelper::title(JText::_('COM_CONDPOWER_MANAGER_CONDPOWERS'), 'condpower');
 		if ($canDo->get('core.admin')) 
 		{
-                     
-                    $html = "<a class=\"toolbar\" 
-                        onclick=\"Joomla.submitform('task.add', document.tasksForm)\" href=\"#\">";
-                    $html .= "<span class=\"icon-32-new\"></span>";
-                    $html .= JText::_('JTOOLBAR_NEW');
-                    $html .= "</a>\n";    	
-                    $objTasksToolBar->appendButton('Custom', $html, 'new');
                     JToolBarHelper::divider();
-                    JToolBarHelper::custom('condpowers.export_csv', 'upload', '', JText::_('COM_CONDPOWER_MANAGER_EXPORT'), TRUE);
-                    JToolBarHelper::custom('condpowers.import_csv', 'back', '', JText::_('COM_CONDPOWER_MANAGER_IMPORT'), false);
+                    JToolBarHelper::custom('exim.export_csv', 'upload', '', JText::_('COM_CONDPOWER_MANAGER_EXPORT'), TRUE);
+                    JToolBarHelper::custom('exim.import_csv', 'back', '', JText::_('COM_CONDPOWER_MANAGER_IMPORT'), false);
                     JToolBarHelper::divider();
                     JToolBarHelper::preferences('com_condpower');
                     $this->tasksToolBar = $objTasksToolBar->render();

@@ -8,7 +8,7 @@ jimport('joomla.database.table');
 /**
  * Hello Table class
  */
-class CondpowerTableVmcat extends JTable
+class TableVmcat extends JTable
 {
 	/**
 	 * Constructor

@@ -64,7 +64,7 @@ JHtml::_('behavior.tooltip');
                 <input type="file" id="import_file_upload" 
                        name="file_upload" 
                        style="display: none" 
-                       onchange="Joomla.submitform('condpowers.import_csv');"
+                       onchange="Joomla.submitform('exim.import_csv');"
                 />
 	</div>
 </form>
